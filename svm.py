@@ -1,10 +1,9 @@
 __author__ = 'ykp'
 
-
 import json
-from sklearn.metrics import f1_score
-from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn import svm
+from sklearn.metrics import f1_score
 
 data = []
 i = 0
@@ -38,13 +37,13 @@ vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_fe
 X = vectorizer.fit_transform(corpus).toarray()
 train_data = X[:75000]
 train_labels = labels[:75000]
-test = X[75000:]
+test_data = X[75000:]
 test_labels = labels[75000:]
 
-clf1 = GaussianNB()
-clf1.fit(train_data,train_labels)
-y_pred = clf1.predict(test)
-accuracy = clf1.score(test,test_labels)
-f1_score(test_labels, y_pred, average='weighted')
-print(accuracy*100)
+model = svm.SVC(kernel='linear',C = 1,gamma = 1)
+model.fit(train_data, train_labels)
+y_pred = model.predict(test_data)
+accuracy = model.score(test_data,test_labels)
+
+print(accuracy * 100)
 print(f1_score(test_labels, y_pred, average='weighted') * 100)
