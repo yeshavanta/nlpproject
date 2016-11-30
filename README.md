@@ -11,7 +11,7 @@ SVM:
 
 Kernel = Linear
 C = 1
-gamme = 10
+gamma = 10
 
 Multi Layer Perceptron:
 
