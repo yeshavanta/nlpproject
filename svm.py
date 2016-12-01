@@ -6,44 +6,75 @@ from sklearn import svm
 from sklearn.metrics import f1_score
 
 data = []
-i = 0
 reviews = []
+corpus = []
 labels = []
-features = []
+X = []
+model = {}
 
-with open('data/yelp_academic_dataset_review.json') as f:
-    for line in f:
+def readDataFromYelpDataBase():
+    global reviews
+    i = 0
+    file = open('data/yelp_academic_dataset_review.json')
+    for line in file:
         if i >= 100000:
             break
         a = json.loads(line)
         reviews.append((a['text'],a['stars']))
         i += 1
 
-corpus = []
-labels = []
 
-for i,j in reviews:
+def generateCorpusAndLabels():
+    global corpus
+    global labels
+    for i,j in reviews:
+        corpus.append(i)
+        if j == 5 or j == 4:
+            labels.append('p')
+        elif j == 3:
+            labels.append('n')
+        else:
+            labels.append('ne')
 
-    corpus.append(i)
+def extractFeatures():
+    global X
+    vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(3,1))
+    X = vectorizer.fit_transform(corpus).toarray()
 
-    if j == 5 or j == 4:
-        labels.append('p')
-    elif j == 3:
-        labels.append('n')
-    else:
-        labels.append('ne')
+def populateTrainAndTestData():
+    global X
+    global trainingData
+    global trainingLabels
+    global testingData
+    global testingLabels
+    trainingData = X[:75000]
+    trainingLabels = labels[:75000]
+    testingData = X[75000:]
+    testingLabels = labels[75000:]
 
-vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(3,1))
-X = vectorizer.fit_transform(corpus).toarray()
-train_data = X[:75000]
-train_labels = labels[:75000]
-test_data = X[75000:]
-test_labels = labels[75000:]
+def trainTheModel():
+    global trainingData
+    global testingData
+    global model
+    model = svm.SVC(kernel='linear',C = 1,gamma = 10)
+    model.fit(trainingData, trainingLabels)
 
-model = svm.SVC(kernel='linear',C = 1,gamma = 1)
-model.fit(train_data, train_labels)
-y_pred = model.predict(test_data)
-accuracy = model.score(test_data,test_labels)
+def predictAndScore():
+    global  model
+    y_pred = model.predict(testingData)
+    accuracy = model.score(testingData,testingLabels)
+    print(accuracy * 100)
+    print(f1_score(testingLabels, y_pred, average='weighted') * 100)
 
-print(accuracy * 100)
-print(f1_score(test_labels, y_pred, average='weighted') * 100)
+
+if __name__ == '__main__':
+    readDataFromYelpDataBase()
+    generateCorpusAndLabels()
+    extractFeatures()
+    populateTrainAndTestData()
+    trainTheModel()
+    predictAndScore()
+
+
+
+
