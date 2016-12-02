@@ -48,3 +48,8 @@ accuracy = clf.score(test_data,test_labels)
 
 print(accuracy * 100)
 print(f1_score(test_labels, y_pred, average='weighted') * 100)
+
+
+
+
+
