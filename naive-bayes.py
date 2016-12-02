@@ -23,11 +23,11 @@ class NaiveBayesClassifier(object):
                 if i >= 100000:
                     break
                 arr = json.loads(line)
-                reviews.append((arr['text'],arr['stars']))
+                self.reviews.append((arr['text'],arr['stars']))
                 i += 1
                 
     def getFeatures(self):
-        vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(1,1))
+        vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(2,1))
         self.data = vectorizer.fit_transform(corpus).toarray()
         
     def assignLabels(self):
@@ -63,7 +63,6 @@ def main():
     nb.splitCorpusAsTrainAndTest()
     nb.trainNaiveBayes()
     nb.predict()
-    
     
 if __name__ == '__main__':
     main()
