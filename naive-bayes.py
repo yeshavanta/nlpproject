@@ -51,8 +51,8 @@ class NaiveBayesClassifier(object):
         self.trainingModel.fit(train_data,train_labels)
         
     def predict(self):
-        y_pred = self.trainingModel.predict(test)
-        accuracy = clf1.score(test,test_labels)
+        y_pred = self.trainingModel.predict(self.test_list)
+        accuracy = self.trainingModel.score(self.test_list,self.test_labels)
         f1_score(test_labels, y_pred, average='weighted')
 
 def main():
