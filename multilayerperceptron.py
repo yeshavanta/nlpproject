@@ -12,7 +12,7 @@ features = []
 
 with open('data/yelp_academic_dataset_review.json') as f:
     for line in f:
-        if i >= 10000:
+        if i >= 100000:
             break
         a = json.loads(line)
         reviews.append((a['text'],a['stars']))
@@ -34,10 +34,10 @@ for i,j in reviews:
 
 vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(3,1))
 X = vectorizer.fit_transform(corpus).toarray()
-train_data = X[:7500]
-train_labels = labels[:7500]
-test_data = X[7500:]
-test_labels = labels[7500:]
+train_data = X[:75000]
+train_labels = labels[:75000]
+test_data = X[75000:]
+test_labels = labels[75000:]
 
 clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
 
