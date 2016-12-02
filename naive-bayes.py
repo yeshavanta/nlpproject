@@ -1,50 +1,69 @@
-__author__ = 'ykp'
-
-
 import json
 from sklearn.metrics import f1_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import CountVectorizer
 
-data = []
-i = 0
-reviews = []
-labels = []
-features = []
+class NaiveBayesClassifier(object):
+    def __init__(self):
+        self.reviews = []
+        self.labels = []
+        self.features = []
+        self.corpus = []
+        self.labels = []
+        self.data = []
+        self.trainingModel = []
+        self.train_list = []
+        self.train_labels = []
+        self.test_list = []
+        self.train_list = []
 
-with open('data/yelp_academic_dataset_review.json') as f:
-    for line in f:
-        if i >= 100000:
-            break
-        a = json.loads(line)
-        reviews.append((a['text'],a['stars']))
-        i += 1
+    def readDataSet(self):
+        with open('data/yelp_academic_dataset_review.json') as file:
+            for line in file:
+                if i >= 100000:
+                    break
+                arr = json.loads(line)
+                reviews.append((arr['text'],arr['stars']))
+                i += 1
+                
+    def getFeatures(self):
+        vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(1,1))
+        self.data = vectorizer.fit_transform(corpus).toarray()
+        
+    def assignLabels(self):
+        for i,j in self.reviews:
+            self.corpus.append(i)
+            if j == 5 or j == 4:
+                self.labels.append('p')
+            elif j == 3:
+                self.labels.append('n')
+            else:
+                self.labels.append('ne')
 
-corpus = []
-labels = []
+    def splitCorpusAsTrainAndTest(self):
+        self.train_list = self.data[:75000]
+        self.train_labels = self.labels[:75000]
+        self.test_list = self.features[75000:]
+        self.test_labels = self.labels[75000:]
 
-for i,j in reviews:
+    def trainNaiveBayes(self):
+        self.trainingModel = GaussianNB()
+        self.trainingModel.fit(train_data,train_labels)
+        
+    def predict(self):
+        y_pred = self.trainingModel.predict(test)
+        accuracy = clf1.score(test,test_labels)
+        f1_score(test_labels, y_pred, average='weighted')
 
-    corpus.append(i)
-
-    if j == 5 or j == 4:
-        labels.append('p')
-    elif j == 3:
-        labels.append('n')
-    else:
-        labels.append('ne')
-
-vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(3,1))
-X = vectorizer.fit_transform(corpus).toarray()
-train_data = X[:75000]
-train_labels = labels[:75000]
-test = X[75000:]
-test_labels = labels[75000:]
-
-clf1 = GaussianNB()
-clf1.fit(train_data,train_labels)
-y_pred = clf1.predict(test)
-accuracy = clf1.score(test,test_labels)
-f1_score(test_labels, y_pred, average='weighted')
-print(accuracy*100)
-print(f1_score(test_labels, y_pred, average='weighted') * 100)
+def main():
+    nb = NaiveBayesClassifier()
+    nb.readDataSet()
+    nb.assignLabels()
+    nb.getFeatures()
+    nb.splitCorpusAsTrainAndTest()
+    nb.trainNaiveBayes()
+    nb.predict()
+    
+    
+if __name__ == '__main__':
+    main()
