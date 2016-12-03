@@ -1,6 +1,9 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import f1_score
 from sklearn.neural_network import MLPClassifier
+from nltk.stem.porter import PorterStemmer
+from nltk import word_tokenize
+import string
 import util
 
 
@@ -55,7 +58,7 @@ testingLabels = labels[75000:]
 #
 #   Getting the instance of a MLP perceptron
 #
-clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
+clf = MLPClassifier(solver='adam', alpha=1e-10, hidden_layer_sizes=(56, 27), random_state=4)
 
 #
 # training the model using training data and training labels
