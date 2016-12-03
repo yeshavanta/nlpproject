@@ -1,7 +1,12 @@
 import json
+import string
 from sklearn.metrics import f1_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import CountVectorizer
+from nltk import word_tokenize          
+from nltk.stem.porter import PorterStemmer
+
+stemmer = PorterStemmer()
 
 class NaiveBayesClassifier(object):
     def __init__(self):
@@ -16,6 +21,19 @@ class NaiveBayesClassifier(object):
         self.train_labels = []
         self.test_list = []
         self.train_list = []
+        
+    
+    def stemTokens(self,tokens,stemmer):
+        stemList = []
+        for w in tokens:
+            stemList.append(stemmer.stem(w))
+        return stemList
+    
+    def tokenize(text):
+        tokens = nltk.word_tokenize(text)
+        tokens = [i for i in tokens if i not in string.punctuation]
+        stemmedTokens = stemTokens(tokens, stemmer)
+        return stemmedTokens
 
     def readDataSet(self):
         with open('data/yelp_academic_dataset_review.json') as file:
@@ -27,7 +45,7 @@ class NaiveBayesClassifier(object):
                 i += 1
                 
     def getFeatures(self):
-        vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(2,1))
+        vectorizer = CountVectorizer(analyzer='word',strip_accents='ascii',tokenizer=tokenize,min_df=1,stop_words='english',lowercase=True,max_features=200,ngram_range=(1,3))
         self.data = vectorizer.fit_transform(corpus).toarray()
         
     def assignLabels(self):
