@@ -24,7 +24,6 @@ class NaiveBayesClassifier(object):
         self.test_list = []
         self.train_list = []
         
-    
     def stemTokens(self,tokens,stemmer):
         stemList = []
         for w in tokens:
@@ -48,7 +47,7 @@ class NaiveBayesClassifier(object):
                 i += 1
                 
     def getFeatures(self):
-        vectorizer = CountVectorizer(analyzer='word',strip_accents='ascii',tokenizer=self.tokenize,min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(1,3))
+        vectorizer = CountVectorizer(analyzer='word',strip_accents='ascii',tokenizer=self.tokenize,min_df=1,stop_words='english',lowercase=True,max_features=500,ngram_range=(1,3))
         self.data = vectorizer.fit_transform(self.corpus).toarray()
         
     def assignLabels(self):
