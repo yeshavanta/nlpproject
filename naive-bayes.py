@@ -25,6 +25,7 @@ class NaiveBayesClassifier(object):
     
     def stemTokens(self,tokens,stemmer):
         stemList = []
+        
         for w in tokens:
             stemList.append(stemmer.stem(w))
         return stemList
