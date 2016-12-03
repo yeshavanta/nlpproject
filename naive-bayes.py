@@ -4,6 +4,8 @@ import nltk
 nltk.download('punkt')
 from sklearn.metrics import f1_score
 from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import BernoulliNB
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk import word_tokenize          
 from nltk.stem.porter import PorterStemmer
@@ -47,7 +49,7 @@ class NaiveBayesClassifier(object):
                 i += 1
                 
     def getFeatures(self):
-        vectorizer = CountVectorizer(analyzer='word',strip_accents='ascii',tokenizer=self.tokenize,min_df=1,stop_words='english',lowercase=True,max_features=500,ngram_range=(1,3))
+        vectorizer = CountVectorizer(analyzer='word',strip_accents='ascii',tokenizer=self.tokenize,min_df=30,stop_words='english',lowercase=True,max_features=700,ngram_range=(1,3))
         self.data = vectorizer.fit_transform(self.corpus).toarray()
         
     def assignLabels(self):
