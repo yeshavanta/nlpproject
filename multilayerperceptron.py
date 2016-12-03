@@ -1,29 +1,26 @@
-import json
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import f1_score
 from sklearn.neural_network import MLPClassifier
+import util
 
 
-data = []
-i = 0
 reviews = []
 labels = []
-features = []
+text = []
 
-with open('data/yelp_academic_dataset_review.json') as f:
-    for line in f:
-        if i >= 10000:
-            break
-        a = json.loads(line)
-        reviews.append((a['text'],a['stars']))
-        i += 1
+reviews = util.readFile('data/yelp_academic_dataset_review.json')
 
-corpus = []
-labels = []
-
+#
+# Here we are going through the reviews that we read from the yelp academic data set,
+# and we are replacing the star ratings with labels
+#
+#   1 ,2 = "ne"
+#      3 = "n"
+#   4, 5 = "p"
+#
 for i,j in reviews:
 
-    corpus.append(i)
+    text.append(i)
 
     if j == 5 or j == 4:
         labels.append('p')
@@ -32,19 +29,50 @@ for i,j in reviews:
     else:
         labels.append('ne')
 
-vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(3,1))
-X = vectorizer.fit_transform(corpus).toarray()
-train_data = X[:7500]
-train_labels = labels[:7500]
-test_data = X[7500:]
-test_labels = labels[7500:]
+#
+#   Feature Extraction along with:
+#   a. Stop word removal
+#   b. bigram and trigram generation
+#   c. obtaining top 100 features based on document frequency
+#
+#
 
+vectorizer = CountVectorizer(min_df=1,stop_words='english',lowercase=True,max_features=100,ngram_range=(3,1))
+X = vectorizer.fit_transform(text).toarray()
+
+
+#
+#
+#   Creating training data, training labels and testing data, testing labels
+#
+#
+
+trainingData = X[:75000]
+trainingLabels = labels[:75000]
+testingData = X[75000:]
+testingLabels = labels[75000:]
+
+#
+#   Getting the instance of a MLP perceptron
+#
 clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
 
+#
+# training the model using training data and training labels
+#
+clf.fit(trainingData, trainingLabels)
 
-clf.fit(train_data, train_labels)
-y_pred = clf.predict(test_data)
-accuracy = clf.score(test_data,test_labels)
+#
+#   predicting the values for testingData
+#
+pred = clf.predict(testingData)
 
-print(accuracy * 100)
-print(f1_score(test_labels, y_pred, average='weighted') * 100)
+#
+#   calculating the F1 score using the predicted labels
+#
+print(f1_score(testingLabels, pred, average='weighted') * 100)
+
+
+
+
+
